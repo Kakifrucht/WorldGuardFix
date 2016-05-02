@@ -11,6 +11,7 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Iterator;
 
@@ -68,6 +69,14 @@ public class Listeners implements Listener {
                     it.remove();
                 }
             }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void disableBoatPlacement(PlayerInteractEvent e) {
+        if (e.getItem() != null) {
+            if (e.getItem().getType().toString().startsWith("BOAT")
+                    && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) e.setCancelled(true);
         }
     }
 }
