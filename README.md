@@ -1,6 +1,7 @@
 # WorldGuardFix
 Bukkit plugin that adds some missing protections for Minecraft/WorldGuard 1.9
 
+You can find a download link on [SpigotMC](https://www.spigotmc.org/resources/worldguard-fix.22712/).
 This plugin is dependant on [WorldGuard](https://github.com/sk89q/WorldGuard). It is drop and go and does not need any configuration.
 
 ## Current features
