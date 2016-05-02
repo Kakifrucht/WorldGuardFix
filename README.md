@@ -1,10 +1,10 @@
 # WorldGuardFix
 Bukkit plugin that adds some missing protections for Minecraft/WorldGuard 1.9
 
-This plugin is dependant on WorldGuard. It is drop and go and does not need any configuration.
+This plugin is dependant on [WorldGuard](https://github.com/sk89q/WorldGuard). It is drop and go and does not need any configuration.
 
-## Currently added
----
+## Current features
+------
 - Hooks into WorldGuard
 - Disables fishing hook in noPvP zones
 - Disables lingering potions in nosplash zones
