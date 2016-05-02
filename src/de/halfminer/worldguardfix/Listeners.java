@@ -1,8 +1,10 @@
 package de.halfminer.worldguardfix;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_9_R1.EntityFishingHook;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -73,10 +75,15 @@ public class Listeners implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void disableBoatPlacement(PlayerInteractEvent e) {
-        if (e.getItem() != null) {
-            if (e.getItem().getType().toString().startsWith("BOAT")
-                    && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) e.setCancelled(true);
+    public void disableBoatAndCrystalPlacement(PlayerInteractEvent e) {
+        if (e.getItem() != null && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) {
+
+            if (e.getItem().getType().equals(Material.END_CRYSTAL)
+                    || e.getItem().getType().toString().startsWith("BOAT")) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "Hey! " + ChatColor.GRAY + "Sorry, but you can't place that block here.");
+                e.getPlayer().updateInventory();
+            }
         }
     }
 }
