@@ -1,0 +1,8 @@
+name: WorldGuardFix
+version: 0.1
+description: WorldGuard Fix for Minecraft 1.9
+author: Kakifrucht
+website: https://halfminer.de
+
+main: de.halfminer.worldguardfix.WorldGuardFix
+depend: [WorldGuard]
