@@ -1,6 +1,7 @@
 package de.halfminer.worldguardfix;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_9_R1.EntityFishingHook;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
@@ -56,7 +57,7 @@ public class Listeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void disableLingeringPotions(LingeringPotionSplashEvent e) {
-        if (!helper.isPotionSplashAllowed(e.getEntity().getLocation())) e.setCancelled(true);
+        if (!helper.isAllowed(e.getEntity().getLocation(), DefaultFlag.POTION_SPLASH)) e.setCancelled(true);
     }
 
     @EventHandler
@@ -67,7 +68,7 @@ public class Listeners implements Listener {
             LivingEntity current = it.next();
             if (current instanceof Player) {
                 Player p = (Player) current;
-                if (!helper.isPotionSplashAllowed(p.getLocation())) {
+                if (!helper.isAllowed(p.getLocation(), DefaultFlag.POTION_SPLASH)) {
                     it.remove();
                 }
             }
@@ -81,7 +82,8 @@ public class Listeners implements Listener {
             if (e.getItem().getType().equals(Material.END_CRYSTAL)
                     || e.getItem().getType().toString().startsWith("BOAT")) {
                 e.setCancelled(true);
-                e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "Hey! " + ChatColor.GRAY + "Sorry, but you can't place that block here.");
+                e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                        + "Hey! " + ChatColor.GRAY + "Sorry, but you can't place that block here.");
                 e.getPlayer().updateInventory();
             }
         }

@@ -7,9 +7,9 @@ This plugin is dependant on [WorldGuard](https://github.com/sk89q/WorldGuard). I
 ## Current features
 
 - Hooks into WorldGuard
-- Disables fishing hook in noPvP zones
-- Disables lingering potions in nosplash zones
-  - Disables areacloud effect in nosplash zones aswell
-- Disable frost walker in no build zones
-- Disable placement of boats in nobuild zones
-- Disable placement of endercrystals in nobuild zones
+- Disables fishing hook in noPvP regions
+- Disables lingering potions in nosplash regions
+  - Disables areacloud effect in nosplash regions aswell
+- Disable frost walker in no build regions
+- Disable placement of boats in nobuild regions
+- Disable placement of endercrystals in nobuild regions
