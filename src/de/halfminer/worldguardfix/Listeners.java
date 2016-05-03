@@ -6,7 +6,6 @@ import com.sk89q.worldguard.bukkit.event.inventory.UseItemEvent;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_9_R1.EntityFishingHook;
-import net.minecraft.server.v1_9_R1.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
@@ -31,26 +30,24 @@ class Listeners implements Listener {
     private final WorldGuardPlugin wg = helper.getWorldGuard();
 
     @EventHandler
-    public void disablePullEffect(ProjectileHitEvent e) {
+    public void disableFishingRodPullEffect(ProjectileHitEvent e) {
 
-        if (!(e.getEntity() instanceof FishHook)) {
-            return;
-        }
+        if (!(e.getEntity() instanceof FishHook)) return;
 
         Player shooter = (Player) e.getEntity().getShooter();
 
-        EntityPlayer entityPlayer = ((CraftPlayer) shooter).getHandle();
-        EntityFishingHook hook = entityPlayer.hookedFish;
-        for (Entity entity : e.getEntity().getNearbyEntities(0.35D, 0.35D, 0.35D)) {
+        for (Entity entity : e.getEntity().getNearbyEntities(0.35d, 0.35d, 0.35d)) {
 
-            if (entity instanceof Player && !entity.getName().equals(shooter.getName())) {
+            if (entity instanceof Player
+                    && !entity.equals(shooter)
+                    && !helper.isPvPAllowed(shooter, (Player) entity)) {
 
-                if (helper.isPvPAllowed(shooter, (Player) entity)) continue;
+                EntityFishingHook hook = ((CraftPlayer) shooter).getHandle().hookedFish;
                 if (hook != null) {
-                    hook.hooked = null;
                     hook.die();
+                    shooter.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                            + "Hey! " + ChatColor.GRAY + "Sorry, but you can't PvP here.");
                 }
-                entityPlayer.hookedFish = null;
                 return;
             }
         }
@@ -68,7 +65,7 @@ class Listeners implements Listener {
 
         if (!helper.isAllowed(e.getEntity().getLocation(), DefaultFlag.POTION_SPLASH)) e.setCancelled(true);
 
-        // call UseItemEvent
+        // Call UseItemEvent
         LingeringPotion potion = e.getEntity();
         Bukkit.getServer().getPluginManager().callEvent(new UseItemEvent(e,
                 Cause.create((Player) potion.getShooter()),
@@ -134,12 +131,13 @@ class Listeners implements Listener {
                 || material.equals(Material.LINGERING_POTION)) {
 
             Player p = e.getCause().getFirstPlayer();
-
             if (p != null && helper.getWorldGuard().hasPermission(p, "worldguard.override.potions")) return;
 
-            Set<PotionEffectType> set = helper.getWorldGuard().getGlobalStateManager().get(e.getWorld()).blockPotions;
-            PotionEffectType type = ((PotionMeta) e.getItemStack().getItemMeta()).getBasePotionData().getType().getEffectType();
-            if (set.contains(type)) {
+            Set<PotionEffectType> blacklist = helper.getWorldGuard().getGlobalStateManager()
+                    .get(e.getWorld()).blockPotions;
+            PotionEffectType potionType = ((PotionMeta) e.getItemStack().getItemMeta())
+                    .getBasePotionData().getType().getEffectType();
+            if (blacklist.contains(potionType)) {
 
                 e.setCancelled(true);
                 if (e.getOriginalEvent() != null && e.getOriginalEvent() instanceof Cancellable) {
@@ -148,7 +146,7 @@ class Listeners implements Listener {
 
                 if (p != null) {
                     p.updateInventory();
-                    p.sendMessage(ChatColor.RED + "Sorry, potions with " + type.getName() + " can't be used.");
+                    p.sendMessage(ChatColor.RED + "Sorry, potions with " + potionType.getName() + " can't be used.");
                     p.updateInventory();
                 }
             }
