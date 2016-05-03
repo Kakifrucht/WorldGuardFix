@@ -63,25 +63,21 @@ class Listeners implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void disableLingeringPotions(LingeringPotionSplashEvent e) {
 
-        if (!helper.isAllowed(e.getEntity().getLocation(), DefaultFlag.POTION_SPLASH)) e.setCancelled(true);
-        else {
+        Player shooter = null;
+        if (e.getEntity().getShooter() instanceof Player) shooter = (Player) e.getEntity().getShooter();
 
-            if (e.getEntity().getShooter() instanceof Player) {
-                Player p = (Player) e.getEntity().getShooter();
+        if (!helper.isAllowed(e.getEntity().getLocation(), DefaultFlag.POTION_SPLASH)
+                || (shooter != null && !helper.isAllowed(shooter.getLocation(), DefaultFlag.POTION_SPLASH))) {
 
-                if (!helper.isAllowed(p.getLocation(), DefaultFlag.POTION_SPLASH)) {
-                    e.setCancelled(true);
-                    p.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
-                            + "Hey! " + ChatColor.GRAY + "Sorry, but you can't use that here.");
-                }
-            }
+            e.setCancelled(true);
+            if (shooter != null) shooter.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                    + "Hey! " + ChatColor.GRAY + "Sorry, but you can't use that here.");
         }
 
         // Call UseItemEvent
         LingeringPotion potion = e.getEntity();
         Bukkit.getServer().getPluginManager().callEvent(new UseItemEvent(e,
-                Cause.create((Player) potion.getShooter()),
-                potion.getLocation().getWorld(), potion.getItem()));
+                Cause.create(shooter), potion.getLocation().getWorld(), potion.getItem()));
     }
 
     @EventHandler
