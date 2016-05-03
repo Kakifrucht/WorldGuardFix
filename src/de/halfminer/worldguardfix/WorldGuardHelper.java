@@ -1,5 +1,6 @@
 package de.halfminer.worldguardfix;
 
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -20,7 +21,12 @@ public class WorldGuardHelper {
         return wg;
     }
 
+    public boolean hasRegion(Location loc) {
+        return wg.getRegionManager(loc.getWorld()).getApplicableRegions(loc).size() > 0;
+    }
+
     public boolean isPvPAllowed(Player attacker, Player victim) {
+
         return isAllowed(attacker.getLocation(), DefaultFlag.PVP) && isAllowed(victim.getLocation(), DefaultFlag.PVP);
     }
 

@@ -9,16 +9,18 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Iterator;
 
-public class Listeners implements Listener {
+class Listeners implements Listener {
 
     private final WorldGuardHelper helper = WorldGuardFix.getInstance().getWgHelper();
     private final WorldGuardPlugin wg = helper.getWorldGuard();
@@ -86,6 +88,19 @@ public class Listeners implements Listener {
                         + "Hey! " + ChatColor.GRAY + "Sorry, but you can't place that block here.");
                 e.getPlayer().updateInventory();
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST,ignoreCancelled = true)
+    public void disableBoatLilypadBreak(final EntityChangeBlockEvent e) {
+
+        if (e.getBlock().getType().equals(Material.WATER_LILY) && helper.hasRegion(e.getBlock().getLocation())) {
+            e.setCancelled(true);
+            e.getEntity().remove();
+
+            // force block update
+            e.getBlock().setType(Material.AIR);
+            e.getBlock().setType(Material.WATER_LILY);
         }
     }
 }
