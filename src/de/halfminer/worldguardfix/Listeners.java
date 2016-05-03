@@ -19,10 +19,10 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import java.util.Iterator;
-import java.util.Set;
 
 class Listeners implements Listener {
 
@@ -30,25 +30,34 @@ class Listeners implements Listener {
     private final WorldGuardPlugin wg = helper.getWorldGuard();
 
     @EventHandler
-    public void disableFishingRodPullEffect(ProjectileHitEvent e) {
+    public void disableRodPullAndTippedArrowBlacklist(ProjectileHitEvent e) {
 
-        if (!(e.getEntity() instanceof FishHook)) return;
+        if (e.getEntity() instanceof FishHook) {
 
-        Player shooter = (Player) e.getEntity().getShooter();
+            Player shooter = (Player) e.getEntity().getShooter();
 
-        for (Entity entity : e.getEntity().getNearbyEntities(0.35d, 0.35d, 0.35d)) {
+            for (Entity entity : e.getEntity().getNearbyEntities(0.35d, 0.35d, 0.35d)) {
 
-            if (entity instanceof Player
-                    && !entity.equals(shooter)
-                    && !helper.isPvPAllowed(shooter, (Player) entity)) {
+                if (entity instanceof Player
+                        && !entity.equals(shooter)
+                        && !helper.isPvPAllowed(shooter, (Player) entity)) {
 
-                EntityFishingHook hook = ((CraftPlayer) shooter).getHandle().hookedFish;
-                if (hook != null) {
-                    hook.die();
-                    shooter.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
-                            + "Hey! " + ChatColor.GRAY + "Sorry, but you can't PvP here.");
+                    EntityFishingHook hook = ((CraftPlayer) shooter).getHandle().hookedFish;
+                    if (hook != null) {
+                        hook.die();
+                        shooter.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                                + "Hey! " + ChatColor.GRAY + "Sorry, but you can't PvP here.");
+                    }
+                    return;
                 }
-                return;
+            }
+        } else if (e.getEntity() instanceof TippedArrow && e.getEntity().getShooter() instanceof Player) {
+
+            TippedArrow arrow = (TippedArrow) e.getEntity();
+            if (helper.isBlacklistedPotion(arrow.getBasePotionData(), e.getEntity().getLocation().getWorld())) {
+                ((Player) arrow.getShooter()).sendMessage(ChatColor.RED + "Sorry, tipped arrows with "
+                        + arrow.getBasePotionData().getType().name() + " have no effect.");
+                arrow.setBasePotionData(new PotionData(PotionType.AWKWARD));
             }
         }
     }
@@ -141,11 +150,8 @@ class Listeners implements Listener {
             Player p = e.getCause().getFirstPlayer();
             if (p != null && helper.getWorldGuard().hasPermission(p, "worldguard.override.potions")) return;
 
-            Set<PotionEffectType> blacklist = helper.getWorldGuard().getGlobalStateManager()
-                    .get(e.getWorld()).blockPotions;
-            PotionEffectType potionType = ((PotionMeta) e.getItemStack().getItemMeta())
-                    .getBasePotionData().getType().getEffectType();
-            if (blacklist.contains(potionType)) {
+            PotionData potionType = ((PotionMeta) e.getItemStack().getItemMeta()).getBasePotionData();
+            if (helper.isBlacklistedPotion(potionType, e.getWorld())) {
 
                 e.setCancelled(true);
                 if (e.getOriginalEvent() != null && e.getOriginalEvent() instanceof Cancellable) {
@@ -154,7 +160,8 @@ class Listeners implements Listener {
 
                 if (p != null) {
                     p.updateInventory();
-                    p.sendMessage(ChatColor.RED + "Sorry, potions with " + potionType.getName() + " can't be used.");
+                    p.sendMessage(ChatColor.RED + "Sorry, potions with "
+                            + potionType.getType().name() + " can't be used.");
                     p.updateInventory();
                 }
             }

@@ -6,7 +6,13 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.Set;
 
 public class WorldGuardHelper {
 
@@ -39,5 +45,11 @@ public class WorldGuardHelper {
         boolean isAllowed = true;
         if (s != null) isAllowed = s.toString().equals("ALLOW");
         return isAllowed;
+    }
+
+    public boolean isBlacklistedPotion(PotionData meta, World world) {
+
+        return wg.getGlobalStateManager()
+                .get(world).blockPotions.contains(meta.getType().getEffectType());
     }
 }
