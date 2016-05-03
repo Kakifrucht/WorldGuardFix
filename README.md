@@ -8,11 +8,11 @@ This plugin is dependant on [WorldGuard](https://github.com/sk89q/WorldGuard). I
 
 - Hooks into WorldGuard
 - Disables fishing hook in no PvP regions
-- Fixes potion blacklist, potions can no longer be used
+- Fixes potion blacklist, blocked potions can no longer be used
 - Disables lingering potions in no splash regions
   - Disables areacloud effect in no splash regions aswell
 - Disable frost walker in no build regions
 - Disable placement of boats in no build regions
 - Disable placement of endercrystals in no build regions
-- Disable chrous fruit tp in protected regions
+- Disable chorus fruit tp in no enderpearl regions
 - Protect lilypads from being destroyed with boats in regions (will remove boat)

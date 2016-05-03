@@ -117,9 +117,11 @@ class Listeners implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void disableChorusFruitTp(PlayerTeleportEvent e) {
 
-        //TODO use custom flag
-        if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)) {
-            if (helper.hasRegion(e.getTo())) e.setCancelled(true);
+        if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
+                && !helper.isAllowed(e.getTo(), DefaultFlag.ENDERPEARL)) {
+            e.setCancelled(true);
+            e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                    + "Hey! " + ChatColor.GRAY + "Sorry, but you can't use that here.");
         }
     }
 
