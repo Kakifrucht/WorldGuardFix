@@ -51,7 +51,9 @@ class Listeners implements Listener {
                     return;
                 }
             }
-        } else if (e.getEntity() instanceof TippedArrow && e.getEntity().getShooter() instanceof Player) {
+        } else if (e.getEntity() instanceof TippedArrow
+                && e.getEntity().getShooter() instanceof Player
+                && !helper.getWorldGuard().hasPermission((Player) e.getEntity().getShooter(), "worldguard.override.potions")) {
 
             TippedArrow arrow = (TippedArrow) e.getEntity();
             if (helper.isBlacklistedPotion(arrow.getBasePotionData(), e.getEntity().getLocation().getWorld())) {
