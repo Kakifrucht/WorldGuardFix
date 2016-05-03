@@ -58,18 +58,21 @@ class Listeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void disableFrostWalker(EntityBlockFormEvent e) {
+
         if (e.getEntity() instanceof Player
                 && !wg.canBuild((Player) e.getEntity(), e.getBlock())) e.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void disableLingeringPotions(LingeringPotionSplashEvent e) {
+
         if (!helper.isAllowed(e.getEntity().getLocation(), DefaultFlag.POTION_SPLASH)) e.setCancelled(true);
 
         // call UseItemEvent
+        LingeringPotion potion = e.getEntity();
         Bukkit.getServer().getPluginManager().callEvent(new UseItemEvent(e,
-                Cause.create((Player) e.getEntity().getShooter()),
-                e.getEntity().getLocation().getWorld(), e.getEntity().getItem()));
+                Cause.create((Player) potion.getShooter()),
+                potion.getLocation().getWorld(), potion.getItem()));
     }
 
     @EventHandler
@@ -78,17 +81,14 @@ class Listeners implements Listener {
         Iterator<LivingEntity> it = e.getAffectedEntities().iterator();
         while (it.hasNext()) {
             LivingEntity current = it.next();
-            if (current instanceof Player) {
-                Player p = (Player) current;
-                if (!helper.isAllowed(p.getLocation(), DefaultFlag.POTION_SPLASH)) {
-                    it.remove();
-                }
-            }
+            if (current instanceof Player && !helper.isAllowed(current.getLocation(), DefaultFlag.POTION_SPLASH))
+                it.remove();
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void disableBoatAndCrystalPlacement(PlayerInteractEvent e) {
+
         if (e.getItem() != null && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) {
 
             if (e.getItem().getType().equals(Material.END_CRYSTAL)
@@ -129,8 +129,8 @@ class Listeners implements Listener {
     public void disableBlacklistedPotionUse(UseItemEvent e) {
 
         Material material = e.getItemStack().getType();
-        if (material.equals(Material.SPLASH_POTION)
-                || material.equals(Material.POTION)
+        if (material.equals(Material.POTION)
+                || material.equals(Material.SPLASH_POTION)
                 || material.equals(Material.LINGERING_POTION)) {
 
             Player p = e.getCause().getFirstPlayer();
@@ -141,16 +141,16 @@ class Listeners implements Listener {
             PotionEffectType type = ((PotionMeta) e.getItemStack().getItemMeta()).getBasePotionData().getType().getEffectType();
             if (set.contains(type)) {
 
+                e.setCancelled(true);
                 if (e.getOriginalEvent() != null && e.getOriginalEvent() instanceof Cancellable) {
                     ((Cancellable) e.getOriginalEvent()).setCancelled(true);
                 }
-                e.setCancelled(true);
+
                 if (p != null) {
                     p.updateInventory();
                     p.sendMessage(ChatColor.RED + "Sorry, potions with " + type.getName() + " can't be used.");
-
+                    p.updateInventory();
                 }
-                e.getCause().getFirstPlayer().updateInventory();
             }
         }
     }
