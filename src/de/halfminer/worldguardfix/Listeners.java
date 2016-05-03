@@ -64,6 +64,18 @@ class Listeners implements Listener {
     public void disableLingeringPotions(LingeringPotionSplashEvent e) {
 
         if (!helper.isAllowed(e.getEntity().getLocation(), DefaultFlag.POTION_SPLASH)) e.setCancelled(true);
+        else {
+
+            if (e.getEntity().getShooter() instanceof Player) {
+                Player p = (Player) e.getEntity().getShooter();
+
+                if (!helper.isAllowed(p.getLocation(), DefaultFlag.POTION_SPLASH)) {
+                    e.setCancelled(true);
+                    p.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                            + "Hey! " + ChatColor.GRAY + "Sorry, but you can't use that here.");
+                }
+            }
+        }
 
         // Call UseItemEvent
         LingeringPotion potion = e.getEntity();
