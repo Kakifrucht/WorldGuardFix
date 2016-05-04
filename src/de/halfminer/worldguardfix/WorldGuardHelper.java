@@ -23,6 +23,7 @@ public class WorldGuardHelper {
     }
 
     public boolean hasRegion(Location loc) {
+
         return wg.getRegionManager(loc.getWorld()).getApplicableRegions(loc).size() > 0;
     }
 
@@ -45,7 +46,6 @@ public class WorldGuardHelper {
 
     public boolean isBlacklistedPotion(PotionData meta, World world) {
 
-        return wg.getGlobalStateManager()
-                .get(world).blockPotions.contains(meta.getType().getEffectType());
+        return wg.getGlobalStateManager().get(world).blockPotions.contains(meta.getType().getEffectType());
     }
 }

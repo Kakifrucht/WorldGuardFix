@@ -4,9 +4,9 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.bukkit.cause.Cause;
 import com.sk89q.worldguard.bukkit.event.inventory.UseItemEvent;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_9_R1.EntityFishingHook;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
@@ -15,7 +15,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -105,15 +108,15 @@ class Listeners implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void disableBoatAndCrystalPlacement(PlayerInteractEvent e) {
 
-        if (e.getItem() != null && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) {
+        if (e.getItem() != null
+                && (e.getItem().getType().equals(Material.END_CRYSTAL)
+                || e.getItem().getType().toString().startsWith("BOAT"))
+                && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) {
 
-            if (e.getItem().getType().equals(Material.END_CRYSTAL)
-                    || e.getItem().getType().toString().startsWith("BOAT")) {
-                e.setCancelled(true);
-                e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
-                        + "Hey! " + ChatColor.GRAY + "Sorry, but you can't put that here.");
-                e.getPlayer().updateInventory();
-            }
+            e.setCancelled(true);
+            e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                    + "Hey! " + ChatColor.GRAY + "Sorry, but you can't put that here.");
+            e.getPlayer().updateInventory();
         }
     }
 
@@ -121,6 +124,7 @@ class Listeners implements Listener {
     public void disableBoatLilypadBreak(EntityChangeBlockEvent e) {
 
         if (e.getBlock().getType().equals(Material.WATER_LILY) && helper.hasRegion(e.getBlock().getLocation())) {
+
             e.setCancelled(true);
             e.getEntity().remove();
 
@@ -134,7 +138,9 @@ class Listeners implements Listener {
     public void disableChorusFruitTp(PlayerTeleportEvent e) {
 
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
-                && !helper.isAllowed(e.getTo(), DefaultFlag.ENDERPEARL)) {
+                && (!helper.isAllowed(e.getFrom(), DefaultFlag.ENDERPEARL)
+                || !helper.isAllowed(e.getTo(), DefaultFlag.ENDERPEARL))) {
+
             e.setCancelled(true);
             e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
                     + "Hey! " + ChatColor.GRAY + "Sorry, but you can't use that here.");
