@@ -40,7 +40,7 @@ public class WorldGuardHelper {
                 .queryValue(null, flag);
 
         boolean isAllowed = true;
-        if (s != null) isAllowed = s.toString().equals("ALLOW");
+        if (s != null) isAllowed = s.equals(StateFlag.State.ALLOW);
         return isAllowed;
     }
 

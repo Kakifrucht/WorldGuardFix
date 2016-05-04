@@ -10,7 +10,8 @@ This plugin is dependant on [WorldGuard](https://github.com/sk89q/WorldGuard). I
 - Fixes potion blacklist, blocked potions can no longer be used
   - Will also check lingering potions and tipped arrows (removes effect of arrows)
 - Disables lingering potions in no splash regions
-  - Disables areacloud effect in no splash regions aswell
+  - Disables areacloud effect in no splash regions
+  - Disables negative areacloud effects in no pvp regions
 - Disables fishing hook in no PvP regions
 - Disable frost walker in no build regions
 - Disable chorus fruit tp in no enderpearl regions

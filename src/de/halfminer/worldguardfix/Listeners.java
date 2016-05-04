@@ -3,6 +3,7 @@ package de.halfminer.worldguardfix;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.bukkit.cause.Cause;
 import com.sk89q.worldguard.bukkit.event.inventory.UseItemEvent;
+import com.sk89q.worldguard.bukkit.util.Materials;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import net.minecraft.server.v1_9_R1.EntityFishingHook;
 import org.bukkit.Bukkit;
@@ -23,9 +24,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 class Listeners implements Listener {
 
@@ -95,13 +99,31 @@ class Listeners implements Listener {
     }
 
     @EventHandler
-    public void disableAreaEffect(AreaEffectCloudApplyEvent e) {
+    public void disableCloudEffect(AreaEffectCloudApplyEvent e) {
 
+        boolean affectsPlayer = false;
         Iterator<LivingEntity> it = e.getAffectedEntities().iterator();
         while (it.hasNext()) {
             LivingEntity current = it.next();
-            if (current instanceof Player && !helper.isAllowed(current.getLocation(), DefaultFlag.POTION_SPLASH))
-                it.remove();
+            if (current instanceof Player) {
+                if (!helper.isAllowed(current.getLocation(), DefaultFlag.POTION_SPLASH)) it.remove();
+                else affectsPlayer = true;
+            }
+        }
+
+        if (affectsPlayer) {
+
+            Set<PotionEffect> set = new HashSet<>(e.getEntity().getCustomEffects());
+            set.add(e.getEntity().getBasePotionData().getType().getEffectType().createEffect(0, 0));
+            if (Materials.hasDamageEffect(set)) {
+
+                Iterator<LivingEntity> it2 = e.getAffectedEntities().iterator();
+                while (it2.hasNext()) {
+                    LivingEntity current = it2.next();
+                    if (current instanceof Player && !helper.isAllowed(current.getLocation(), DefaultFlag.PVP))
+                        it2.remove();
+                }
+            }
         }
     }
 
