@@ -2,7 +2,9 @@
 Bukkit plugin that adds some missing protections for Minecraft/WorldGuard 1.9.
 Download link can be found on [SpigotMC](https://www.spigotmc.org/resources/worldguard-fix.22712/).
 
-This plugin is dependant on [WorldGuard](https://github.com/sk89q/WorldGuard). It is drop and go and does not require any configuration.
+This plugin is dependant on [WorldGuard](https://github.com/sk89q/WorldGuard).
+It is drop and go and does not require any configuration.
+You can however disable certain features via a optional config file (use /worldguardfix generate).
 
 ## Current features
 
@@ -18,3 +20,4 @@ This plugin is dependant on [WorldGuard](https://github.com/sk89q/WorldGuard). I
 - Disable placement of boats in no build regions
 - Protect lilypads from being destroyed with boats in regions (will remove boat)
 - Disable placement of endercrystals in no build regions
+- Fixes toggleable via optional config (generate with /worldguardfix generate)

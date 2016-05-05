@@ -33,6 +33,7 @@ import java.util.Set;
 
 class Listeners implements Listener {
 
+    private final Config config = WorldGuardFix.getInstance().getCustomConfig();
     private final WorldGuardHelper helper = WorldGuardFix.getInstance().getWgHelper();
     private final WorldGuardPlugin wg = helper.getWorldGuard();
 
@@ -40,6 +41,8 @@ class Listeners implements Listener {
     public void disableRodPullAndTippedArrowBlacklist(ProjectileHitEvent e) {
 
         if (e.getEntity() instanceof FishHook) {
+
+            if (!config.enableFishingHookCheck) return;
 
             Player shooter = (Player) e.getEntity().getShooter();
 
@@ -75,6 +78,7 @@ class Listeners implements Listener {
     public void disableFrostWalker(EntityBlockFormEvent e) {
 
         if (e.getEntity() instanceof Player
+                && config.enableFrostwalkerCheck
                 && !wg.canBuild((Player) e.getEntity(), e.getBlock())) e.setCancelled(true);
     }
 
@@ -132,7 +136,7 @@ class Listeners implements Listener {
 
         if (e.getItem() != null
                 && (e.getItem().getType().equals(Material.END_CRYSTAL)
-                || e.getItem().getType().toString().startsWith("BOAT"))
+                || (e.getItem().getType().toString().startsWith("BOAT")) && config.enableBoatCheck)
                 && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) {
 
             e.setCancelled(true);
@@ -145,7 +149,9 @@ class Listeners implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void disableBoatLilypadBreak(EntityChangeBlockEvent e) {
 
-        if (e.getBlock().getType().equals(Material.WATER_LILY) && helper.hasRegion(e.getBlock().getLocation())) {
+        if (e.getBlock().getType().equals(Material.WATER_LILY)
+                && config.enableLilypadCheck
+                && helper.hasRegion(e.getBlock().getLocation())) {
 
             e.setCancelled(true);
             e.getEntity().remove();
@@ -160,6 +166,7 @@ class Listeners implements Listener {
     public void disableChorusFruitTp(PlayerTeleportEvent e) {
 
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
+                && config.enableChorusFruitCheck
                 && (!helper.isAllowed(e.getFrom(), DefaultFlag.ENDERPEARL)
                 || !helper.isAllowed(e.getTo(), DefaultFlag.ENDERPEARL))) {
 

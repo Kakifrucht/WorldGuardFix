@@ -1,8 +1,18 @@
 name: WorldGuardFix
-version: 1.4
+version: 1.5
 description: WorldGuard Fix for Minecraft 1.9
 author: Kakifrucht
 website: https://halfminer.de
 
 main: de.halfminer.worldguardfix.WorldGuardFix
 depend: [WorldGuard]
+
+commands:
+  worldguardfix:
+    description: Generate and reload the config
+    aliases: [wgf]
+
+permissions:
+  worldguardfix:
+    default: op
+    description: Access to /worldguardfix
