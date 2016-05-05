@@ -1,9 +1,7 @@
 package de.halfminer.worldguardfix;
 
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.bukkit.*;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -28,24 +26,33 @@ public class WorldGuardHelper {
     }
 
     public boolean isPvPAllowed(Player attacker, Player victim) {
-
-        return isAllowed(attacker.getLocation(), DefaultFlag.PVP) && isAllowed(victim.getLocation(), DefaultFlag.PVP);
+        return isAllowed(attacker, DefaultFlag.PVP) && isAllowed(victim, DefaultFlag.PVP);
     }
 
-    public boolean isAllowed(Location loc, Flag<StateFlag.State> flag) {
+    public boolean isAllowed(Player player, StateFlag flag) {
+        return isAllowedQuery((BukkitPlayer) wg.wrapPlayer(player), player.getLocation(), flag);
+    }
 
-        StateFlag.State s = wg
-                .getRegionManager(loc.getWorld())
-                .getApplicableRegions(loc)
-                .queryValue(null, flag);
+    public boolean isAllowed(Location loc, StateFlag flag) {
+        return isAllowedQuery(null, loc, flag);
+    }
+
+    public boolean isAllowed(Player player, Location loc, StateFlag flag) {
+        if (player == null) return isAllowedQuery(null, loc, flag);
+        return isAllowedQuery((BukkitPlayer) wg.wrapPlayer(player), loc, flag);
+    }
+
+    private boolean isAllowedQuery(BukkitPlayer ass, Location loc, StateFlag flag) {
+
+        if (ass != null && ass.hasPermission("worldguard.region.bypass." + loc.getWorld().getName())) return true;
+        StateFlag.State state = wg.getRegionContainer().createQuery().queryState(loc, ass, flag);
 
         boolean isAllowed = true;
-        if (s != null) isAllowed = s.equals(StateFlag.State.ALLOW);
+        if (state != null) isAllowed = state.equals(StateFlag.State.ALLOW);
         return isAllowed;
     }
 
     public boolean isBlacklistedPotion(PotionData meta, World world) {
-
         return wg.getGlobalStateManager().get(world).blockPotions.contains(meta.getType().getEffectType());
     }
 }

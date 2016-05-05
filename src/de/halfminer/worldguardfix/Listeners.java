@@ -88,8 +88,8 @@ class Listeners implements Listener {
         Player shooter = null;
         if (e.getEntity().getShooter() instanceof Player) shooter = (Player) e.getEntity().getShooter();
 
-        if (!helper.isAllowed(e.getEntity().getLocation(), DefaultFlag.POTION_SPLASH)
-                || (shooter != null && !helper.isAllowed(shooter.getLocation(), DefaultFlag.POTION_SPLASH))) {
+        if (!helper.isAllowed(shooter, e.getEntity().getLocation(), DefaultFlag.POTION_SPLASH)
+                || (shooter != null && !helper.isAllowed(shooter, DefaultFlag.POTION_SPLASH))) {
 
             e.setCancelled(true);
             if (shooter != null) shooter.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
@@ -117,6 +117,9 @@ class Listeners implements Listener {
 
         if (affectsPlayer) {
 
+            // do entities throw lingering potions yet? check mob_damage flag either way
+            boolean sourceIsPlayer = e.getEntity().getSource() instanceof Player;
+
             Set<PotionEffect> set = new HashSet<>(e.getEntity().getCustomEffects());
             set.add(e.getEntity().getBasePotionData().getType().getEffectType().createEffect(0, 0));
             if (Materials.hasDamageEffect(set)) {
@@ -124,7 +127,9 @@ class Listeners implements Listener {
                 Iterator<LivingEntity> it2 = e.getAffectedEntities().iterator();
                 while (it2.hasNext()) {
                     LivingEntity current = it2.next();
-                    if (current instanceof Player && !helper.isAllowed(current.getLocation(), DefaultFlag.PVP))
+                    if (current instanceof Player
+                            && ((sourceIsPlayer && !helper.isAllowed((Player) current, DefaultFlag.PVP))
+                            || (!sourceIsPlayer && !helper.isAllowed(current.getLocation(), DefaultFlag.MOB_DAMAGE))))
                         it2.remove();
                 }
             }
@@ -136,7 +141,7 @@ class Listeners implements Listener {
 
         if (e.getItem() != null
                 && (e.getItem().getType().equals(Material.END_CRYSTAL)
-                || (e.getItem().getType().toString().startsWith("BOAT")) && config.enableBoatCheck)
+                || (config.enableBoatCheck && e.getItem().getType().toString().startsWith("BOAT")))
                 && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) {
 
             e.setCancelled(true);
@@ -167,8 +172,8 @@ class Listeners implements Listener {
 
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
                 && config.enableChorusFruitCheck
-                && (!helper.isAllowed(e.getFrom(), DefaultFlag.ENDERPEARL)
-                || !helper.isAllowed(e.getTo(), DefaultFlag.ENDERPEARL))) {
+                && (!helper.isAllowed(e.getPlayer(), DefaultFlag.ENDERPEARL)
+                || !helper.isAllowed(e.getPlayer(), e.getTo(), DefaultFlag.ENDERPEARL))) {
 
             e.setCancelled(true);
             e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD

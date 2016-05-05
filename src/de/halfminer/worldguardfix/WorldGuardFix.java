@@ -53,15 +53,20 @@ public class WorldGuardFix extends JavaPlugin {
                 if (config.load()) sender.sendMessage(ChatColor.GREEN + "WorldGuardFix Configuration reloaded");
                 else sender.sendMessage(ChatColor.RED + "No configuration file found, generate it with"
                         + ChatColor.ITALIC + " /worldguardfix generate");
-            }
+            } else sendDefaultMessage(sender);
 
-        } else sender.sendMessage("WorldGuardFix version " + getDescription().getVersion()
+        } else sendDefaultMessage(sender);
+        return true;
+    }
+
+    private void sendDefaultMessage(CommandSender sendTo) {
+
+        sendTo.sendMessage("WorldGuardFix version " + getDescription().getVersion()
                 + "\n" + "WorldGuard version " + wgh.getWorldGuard().getDescription().getVersion()
                 + "\n" + ChatColor.AQUA + ChatColor.ITALIC + "\n" + "https://www.spigotmc.org/resources/worldguard-fix.22712/"
                 + "\n \n" + ChatColor.RESET + ChatColor.BOLD + "Commands:\n" + ChatColor.RESET
                 + "Generate default config file: " + ChatColor.ITALIC + " /worldguardfix generate"
                 + ChatColor.RESET + "\n" + "Reload config: " + ChatColor.ITALIC + "/worldguardfix reload");
-        return false;
     }
 
     public Config getCustomConfig() {

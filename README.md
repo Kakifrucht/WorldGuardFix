@@ -7,7 +7,6 @@ It is drop and go and does not require any configuration.
 You can however disable certain features via a optional config file (use /worldguardfix generate).
 
 ## Current features
-
 - Hooks into WorldGuard
 - Fixes potion blacklist, blocked potions can no longer be used
   - Will also check lingering potions and tipped arrows (removes effect of arrows)
@@ -20,4 +19,4 @@ You can however disable certain features via a optional config file (use /worldg
 - Disable placement of boats in no build regions
 - Protect lilypads from being destroyed with boats in regions (will remove boat)
 - Disable placement of endercrystals in no build regions
-- Fixes toggleable via optional config (generate with /worldguardfix generate)
+- Fixes are toggleable via optional config (generate with */worldguardfix generate*)
