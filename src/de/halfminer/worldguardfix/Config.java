@@ -8,11 +8,11 @@ public class Config {
 
     private final WorldGuardFix fix = WorldGuardFix.getInstance();
 
-    boolean enableFishingHookCheck = true;
-    boolean enableFrostwalkerCheck = true;
-    boolean enableChorusFruitCheck = true;
-    boolean enableBoatCheck = true;
-    boolean enableLilypadCheck = true;
+    boolean enableFishingHookCheck;
+    boolean enableFrostwalkerCheck;
+    boolean enableChorusFruitCheck;
+    boolean enableBoatCheck;
+    boolean enableLilypadCheck;
 
     public Config() {
         load();
@@ -21,7 +21,6 @@ public class Config {
     public boolean generate() {
 
         if (!useConfigFile()) {
-
             fix.saveDefaultConfig();
             return true;
         } else return false;
@@ -40,7 +39,18 @@ public class Config {
             enableBoatCheck = config.getBoolean("enableBoatCheck", true);
             enableLilypadCheck = config.getBoolean("enableLilypadCheck", true);
             return true;
-        } return false;
+        } else {
+            loadDefaults();
+            return false;
+        }
+    }
+
+    private void loadDefaults() {
+        enableFishingHookCheck = true;
+        enableFrostwalkerCheck = true;
+        enableChorusFruitCheck = true;
+        enableBoatCheck = true;
+        enableLilypadCheck = true;
     }
 
     private boolean useConfigFile() {
