@@ -196,12 +196,10 @@ class Listeners implements Listener {
             if (helper.isBlacklistedPotion(potionType, e.getWorld())) {
 
                 e.setCancelled(true);
-                if (e.getOriginalEvent() != null && e.getOriginalEvent() instanceof Cancellable) {
+                if (e.getOriginalEvent() instanceof Cancellable)
                     ((Cancellable) e.getOriginalEvent()).setCancelled(true);
-                }
 
                 if (p != null) {
-                    p.updateInventory();
                     p.sendMessage(ChatColor.RED + "Sorry, potions with "
                             + potionType.getType().name() + " can't be used.");
                     p.updateInventory();
