@@ -121,7 +121,7 @@ class Listeners implements Listener {
             boolean sourceIsPlayer = e.getEntity().getSource() instanceof Player;
 
             Set<PotionEffect> set = new HashSet<>(e.getEntity().getCustomEffects());
-            set.add(e.getEntity().getBasePotionData().getType().getEffectType().createEffect(0, 0));
+            set.add(new PotionEffect(e.getEntity().getBasePotionData().getType().getEffectType(), 1, 1));
             if (Materials.hasDamageEffect(set)) {
 
                 Iterator<LivingEntity> it2 = e.getAffectedEntities().iterator();

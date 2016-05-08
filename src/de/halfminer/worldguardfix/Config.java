@@ -40,17 +40,13 @@ public class Config {
             enableLilypadCheck = config.getBoolean("enableLilypadCheck", true);
             return true;
         } else {
-            loadDefaults();
+            enableFishingHookCheck = true;
+            enableFrostwalkerCheck = true;
+            enableChorusFruitCheck = true;
+            enableBoatCheck = true;
+            enableLilypadCheck = true;
             return false;
         }
-    }
-
-    private void loadDefaults() {
-        enableFishingHookCheck = true;
-        enableFrostwalkerCheck = true;
-        enableChorusFruitCheck = true;
-        enableBoatCheck = true;
-        enableLilypadCheck = true;
     }
 
     private boolean useConfigFile() {
