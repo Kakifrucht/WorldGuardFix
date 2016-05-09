@@ -30,24 +30,27 @@ public class WorldGuardHelper {
     }
 
     public boolean isAllowed(Player player, StateFlag flag) {
-        return isAllowedQuery((BukkitPlayer) wg.wrapPlayer(player), player.getLocation(), flag);
+        return isAllowedQuery((BukkitPlayer) wg.wrapPlayer(player), player.getLocation(), flag, true);
     }
 
     public boolean isAllowed(Location loc, StateFlag flag) {
-        return isAllowedQuery(null, loc, flag);
+        return isAllowedQuery(null, loc, flag, true);
     }
 
     public boolean isAllowed(Player player, Location loc, StateFlag flag) {
-        if (player == null) return isAllowedQuery(null, loc, flag);
-        return isAllowedQuery((BukkitPlayer) wg.wrapPlayer(player), loc, flag);
+        return isAllowedQuery(player != null ? (BukkitPlayer) wg.wrapPlayer(player) : null, loc, flag, true);
     }
 
-    private boolean isAllowedQuery(BukkitPlayer ass, Location loc, StateFlag flag) {
+    public boolean isAllowed(Player player, Location loc, StateFlag flag, boolean valueIfNull) {
+        return isAllowedQuery(player != null ? (BukkitPlayer) wg.wrapPlayer(player) : null, loc, flag, valueIfNull);
+    }
+
+    private boolean isAllowedQuery(BukkitPlayer ass, Location loc, StateFlag flag, boolean valueIfNull) {
 
         if (ass != null && ass.hasPermission("worldguard.region.bypass." + loc.getWorld().getName())) return true;
         StateFlag.State state = wg.getRegionContainer().createQuery().queryState(loc, ass, flag);
 
-        boolean isAllowed = true;
+        boolean isAllowed = valueIfNull;
         if (state != null) isAllowed = state.equals(StateFlag.State.ALLOW);
         return isAllowed;
     }

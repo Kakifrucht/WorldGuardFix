@@ -56,7 +56,7 @@ class Listeners implements Listener {
                     if (hook != null) {
                         hook.die();
                         shooter.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
-                                + "Hey! " + ChatColor.GRAY + "Sorry, but you can't PvP here.");
+                                + "Hey!" + ChatColor.GRAY + " Sorry, but you can't PvP here.");
                     }
                     return;
                 }
@@ -93,7 +93,7 @@ class Listeners implements Listener {
 
             e.setCancelled(true);
             if (shooter != null) shooter.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
-                    + "Hey! " + ChatColor.GRAY + "Sorry, but you can't use that here.");
+                    + "Hey!" + ChatColor.GRAY + " Sorry, but you can't use that here.");
         }
 
         // Call UseItemEvent
@@ -139,15 +139,27 @@ class Listeners implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void disableBoatAndCrystalPlacement(PlayerInteractEvent e) {
 
-        if (e.getItem() != null
-                && (e.getItem().getType().equals(Material.END_CRYSTAL)
-                || (config.enableBoatCheck && e.getItem().getType().toString().startsWith("BOAT")))
-                && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) {
+        if (e.getItem() != null && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) {
 
-            e.setCancelled(true);
-            e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
-                    + "Hey! " + ChatColor.GRAY + "Sorry, but you can't put that here.");
-            e.getPlayer().updateInventory();
+            boolean cancel = false;
+            if (config.enableBoatCheck && e.getItem().getType().toString().startsWith("BOAT")
+                    && !helper.isAllowed(e.getPlayer(),
+                    e.getClickedBlock().getLocation(), DefaultFlag.PLACE_VEHICLE, false)) {
+
+                cancel = true;
+                e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                        + "Hey!" + ChatColor.GRAY + " Sorry, but you can't place vehicles here.");
+
+            } else if (e.getItem().getType().equals(Material.END_CRYSTAL)) {
+
+                cancel = true;
+                e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                        + "Hey!" + ChatColor.GRAY + " Sorry, but you can't put that here.");
+            }
+            if (cancel) {
+                e.setCancelled(true);
+                e.getPlayer().updateInventory();
+            }
         }
     }
 
@@ -177,7 +189,7 @@ class Listeners implements Listener {
 
             e.setCancelled(true);
             e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
-                    + "Hey! " + ChatColor.GRAY + "Sorry, but you can't use that here.");
+                    + "Hey!" + ChatColor.GRAY + " Sorry, but you can't use that here.");
         }
     }
 

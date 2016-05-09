@@ -16,7 +16,7 @@ You can however disable certain features via a optional config file (use /worldg
 - Disables fishing hook in no PvP regions
 - Disable frost walker in no build regions
 - Disable chorus fruit tp in no enderpearl regions
-- Disable placement of boats in no build regions
+- Disable placement of boats in no build regions (checks vehicle-place flag)
 - Protect lilypads from being destroyed with boats in regions (will remove boat)
 - Disable placement of endercrystals in no build regions
 - Fixes are toggleable via optional config (generate with */worldguardfix generate*)
