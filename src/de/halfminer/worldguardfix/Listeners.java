@@ -16,10 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
-import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.LingeringPotionSplashEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -150,7 +147,9 @@ class Listeners implements Listener {
                 e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
                         + "Hey!" + ChatColor.GRAY + " Sorry, but you can't place vehicles here.");
 
-            } else if (e.getItem().getType().equals(Material.END_CRYSTAL)) {
+            } else if (e.getItem().getType().equals(Material.END_CRYSTAL)
+                    && (e.getClickedBlock().getType().equals(Material.BEDROCK)
+                    || e.getClickedBlock().getType().equals(Material.OBSIDIAN))) {
 
                 cancel = true;
                 e.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
