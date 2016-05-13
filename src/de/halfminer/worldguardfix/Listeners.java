@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import java.util.HashSet;
@@ -118,7 +119,8 @@ class Listeners implements Listener {
             boolean sourceIsPlayer = e.getEntity().getSource() instanceof Player;
 
             Set<PotionEffect> set = new HashSet<>(e.getEntity().getCustomEffects());
-            set.add(new PotionEffect(e.getEntity().getBasePotionData().getType().getEffectType(), 1, 1));
+            PotionEffectType type = e.getEntity().getBasePotionData().getType().getEffectType();
+            if (type != null) set.add(type.createEffect(1, 1));
             if (Materials.hasDamageEffect(set)) {
 
                 Iterator<LivingEntity> it2 = e.getAffectedEntities().iterator();
