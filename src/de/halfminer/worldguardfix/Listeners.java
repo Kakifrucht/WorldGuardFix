@@ -150,6 +150,7 @@ class Listeners implements Listener {
                         + "Hey!" + ChatColor.GRAY + " Sorry, but you can't place vehicles here.");
 
             } else if (e.getItem().getType().equals(Material.END_CRYSTAL)
+                    && config.enableEndCrystalCheck
                     && (e.getClickedBlock().getType().equals(Material.BEDROCK)
                     || e.getClickedBlock().getType().equals(Material.OBSIDIAN))) {
 

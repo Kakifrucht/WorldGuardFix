@@ -12,6 +12,7 @@ public class Config {
     boolean enableFrostwalkerCheck;
     boolean enableChorusFruitCheck;
     boolean enableBoatCheck;
+    boolean enableEndCrystalCheck;
     boolean enableLilypadCheck;
 
     public Config() {
@@ -37,6 +38,7 @@ public class Config {
             enableFrostwalkerCheck = config.getBoolean("enableFrostwalkerCheck", true);
             enableChorusFruitCheck = config.getBoolean("enableChorusFruitCheck", true);
             enableBoatCheck = config.getBoolean("enableBoatCheck", true);
+            enableEndCrystalCheck = config.getBoolean("enableEndCrystalCheck", true);
             enableLilypadCheck = config.getBoolean("enableLilypadCheck", true);
             return true;
         } else {
@@ -44,6 +46,7 @@ public class Config {
             enableFrostwalkerCheck = true;
             enableChorusFruitCheck = true;
             enableBoatCheck = true;
+            enableEndCrystalCheck = true;
             enableLilypadCheck = true;
             return false;
         }

@@ -2,4 +2,5 @@ enableFishingHookCheck: true
 enableFrostwalkerCheck: true
 enableChorusFruitCheck: true
 enableBoatCheck: true
+enableEndCrystalCheck: true
 enableLilypadCheck: true
