@@ -20,3 +20,4 @@ You can however disable certain features via a optional config file (use /worldg
 - Protect lilypads from being destroyed with boats in regions (will remove boat)
 - Disable placement of endercrystals in no build regions
 - Fixes are toggleable via optional config (generate with */worldguardfix generate*)
+  - World's can be exempt completely

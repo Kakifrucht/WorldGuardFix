@@ -40,7 +40,7 @@ class Listeners implements Listener {
 
         if (e.getEntity() instanceof FishHook) {
 
-            if (!config.enableFishingHookCheck) return;
+            if (!config.checkEnabled(Config.ConfigNode.FISHING_HOOK, e.getEntity().getLocation())) return;
 
             Player shooter = (Player) e.getEntity().getShooter();
 
@@ -75,8 +75,8 @@ class Listeners implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void disableFrostWalker(EntityBlockFormEvent e) {
 
-        if (e.getEntity() instanceof Player
-                && config.enableFrostwalkerCheck
+        if (config.checkEnabled(Config.ConfigNode.FROSTWALKER, e.getBlock().getLocation())
+                && e.getEntity() instanceof Player
                 && !wg.canBuild((Player) e.getEntity(), e.getBlock())) e.setCancelled(true);
     }
 
@@ -141,7 +141,8 @@ class Listeners implements Listener {
         if (e.getItem() != null && !wg.canBuild(e.getPlayer(), e.getClickedBlock())) {
 
             boolean cancel = false;
-            if (config.enableBoatCheck && e.getItem().getType().toString().startsWith("BOAT")
+            if (config.checkEnabled(Config.ConfigNode.BOAT_PLACE, e.getClickedBlock().getLocation())
+                    && e.getItem().getType().toString().startsWith("BOAT")
                     && !helper.isAllowed(e.getPlayer(),
                     e.getClickedBlock().getLocation(), DefaultFlag.PLACE_VEHICLE, false)) {
 
@@ -150,7 +151,7 @@ class Listeners implements Listener {
                         + "Hey!" + ChatColor.GRAY + " Sorry, but you can't place vehicles here.");
 
             } else if (e.getItem().getType().equals(Material.END_CRYSTAL)
-                    && config.enableEndCrystalCheck
+                    && config.checkEnabled(Config.ConfigNode.END_CRYSTAL_PLACE, e.getClickedBlock().getLocation())
                     && (e.getClickedBlock().getType().equals(Material.BEDROCK)
                     || e.getClickedBlock().getType().equals(Material.OBSIDIAN))) {
 
@@ -169,7 +170,7 @@ class Listeners implements Listener {
     public void disableBoatLilypadBreak(EntityChangeBlockEvent e) {
 
         if (e.getBlock().getType().equals(Material.WATER_LILY)
-                && config.enableLilypadCheck
+                && config.checkEnabled(Config.ConfigNode.LILYPAD_BREAK, e.getBlock().getLocation())
                 && helper.hasRegion(e.getBlock().getLocation())) {
 
             e.setCancelled(true);
@@ -185,7 +186,7 @@ class Listeners implements Listener {
     public void disableChorusFruitTp(PlayerTeleportEvent e) {
 
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
-                && config.enableChorusFruitCheck
+                && config.checkEnabled(Config.ConfigNode.CHORUS_FRUIT, e.getFrom())
                 && (!helper.isAllowed(e.getPlayer(), DefaultFlag.ENDERPEARL)
                 || !helper.isAllowed(e.getPlayer(), e.getTo(), DefaultFlag.ENDERPEARL))) {
 

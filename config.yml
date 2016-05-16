@@ -4,3 +4,7 @@ enableChorusFruitCheck: true
 enableBoatCheck: true
 enableEndCrystalCheck: true
 enableLilypadCheck: true
+#All the checks will be disabled in following worlds
+disableAllInWorld:
+- put_world_name_here
+- or_here
