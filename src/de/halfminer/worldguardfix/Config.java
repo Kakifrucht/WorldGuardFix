@@ -18,12 +18,15 @@ public class Config {
     private final Map<ConfigNode, Boolean> settings = new HashMap<>();
     private final Set<World> disabledWorlds = new HashSet<>();
 
+    private boolean configUsed;
+    private boolean worldsDisabled;
+
     public Config() {
         load();
     }
 
     public boolean checkEnabled(ConfigNode node, Location loc) {
-        return settings.get(node) && !disabledWorlds.contains(loc.getWorld());
+        return !configUsed || (settings.get(node) && !(worldsDisabled && disabledWorlds.contains(loc.getWorld())));
     }
 
     public boolean generate() {
@@ -41,6 +44,7 @@ public class Config {
             FileConfiguration config = fix.getConfig();
             config.options().copyDefaults(true);
             fix.saveConfig();
+            configUsed = true;
             settings.put(ConfigNode.FISHING_HOOK, config.getBoolean("enableFishingHookCheck", true));
             settings.put(ConfigNode.FROSTWALKER, config.getBoolean("enableFrostwalkerCheck", true));
             settings.put(ConfigNode.CHORUS_FRUIT, config.getBoolean("enableChorusFruitCheck", true));
@@ -56,8 +60,10 @@ public class Config {
                         break;
                     }
             }
+            worldsDisabled = disabledWorlds.size() > 0;
             return true;
         } else {
+            configUsed = false;
             settings.put(ConfigNode.FISHING_HOOK, true);
             settings.put(ConfigNode.FROSTWALKER, true);
             settings.put(ConfigNode.CHORUS_FRUIT, true);
