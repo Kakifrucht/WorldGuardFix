@@ -5,11 +5,9 @@ import com.sk89q.worldguard.bukkit.cause.Cause;
 import com.sk89q.worldguard.bukkit.event.inventory.UseItemEvent;
 import com.sk89q.worldguard.bukkit.util.Materials;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import net.minecraft.server.v1_9_R1.EntityFishingHook;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -17,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -35,31 +34,40 @@ class Listeners implements Listener {
     private final WorldGuardHelper helper = WorldGuardFix.getInstance().getWgHelper();
     private final WorldGuardPlugin wg = helper.getWorldGuard();
 
-    @EventHandler
-    public void disableRodPullAndTippedArrowBlacklist(ProjectileHitEvent e) {
+    @EventHandler(ignoreCancelled = true)
+    public void disableRodPullEvent(PlayerFishEvent e) {
 
-        if (e.getEntity() instanceof FishHook) {
+        if (e.getCaught() instanceof Player
+                && config.checkEnabled(Config.ConfigNode.FISHING_HOOK, e.getCaught().getLocation())) {
 
-            if (!config.checkEnabled(Config.ConfigNode.FISHING_HOOK, e.getEntity().getLocation())) return;
+            final Player shooter = e.getPlayer();
+            Player caught = (Player) e.getCaught();
 
-            Player shooter = (Player) e.getEntity().getShooter();
+            if (!shooter.equals(caught) && !helper.isPvPAllowed(shooter, caught)) {
 
-            for (Entity entity : e.getEntity().getNearbyEntities(0.35d, 0.35d, 0.35d)) {
+                final int heldSlot = shooter.getInventory().getHeldItemSlot();
+                shooter.getInventory().setHeldItemSlot((heldSlot + 1) % 9);
+                shooter.updateInventory();
 
-                if (entity instanceof Player
-                        && !entity.equals(shooter)
-                        && !helper.isPvPAllowed(shooter, (Player) entity)) {
-
-                    EntityFishingHook hook = ((CraftPlayer) shooter).getHandle().hookedFish;
-                    if (hook != null) {
-                        hook.die();
-                        shooter.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
-                                + "Hey!" + ChatColor.GRAY + " Sorry, but you can't PvP here.");
+                Bukkit.getScheduler().runTaskLater(WorldGuardFix.getInstance(), new Runnable() {
+                    @Override
+                    public void run() {
+                        shooter.getInventory().setHeldItemSlot(heldSlot);
+                        shooter.updateInventory();
                     }
-                    return;
-                }
+                }, 2L);
+
+                e.setCancelled(true);
+                shooter.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD
+                            + "Hey!" + ChatColor.GRAY + " Sorry, but you can't PvP here.");
             }
-        } else if (e.getEntity() instanceof TippedArrow
+        }
+    }
+
+    @EventHandler
+    public void fixTippedArrowBlacklist(ProjectileHitEvent e) {
+
+        if (e.getEntity() instanceof TippedArrow
                 && e.getEntity().getShooter() instanceof Player
                 && !helper.getWorldGuard().hasPermission((Player) e.getEntity().getShooter(), "worldguard.override.potions")) {
 
