@@ -15,7 +15,7 @@ public class Config {
 
     private final WorldGuardFix fix = WorldGuardFix.getInstance();
 
-    private final Map<ConfigNode, Boolean> settings = new HashMap<>();
+    private final Map<Node, Boolean> settings = new HashMap<>();
     private final Set<World> disabledWorlds = new HashSet<>();
 
     private boolean configUsed;
@@ -25,7 +25,7 @@ public class Config {
         load();
     }
 
-    public boolean checkEnabled(ConfigNode node, Location loc) {
+    public boolean checkEnabled(Node node, Location loc) {
         return !configUsed || (settings.get(node) && !(worldsDisabled && disabledWorlds.contains(loc.getWorld())));
     }
 
@@ -45,31 +45,23 @@ public class Config {
             config.options().copyDefaults(true);
             fix.saveConfig();
             configUsed = true;
-            settings.put(ConfigNode.FISHING_HOOK, config.getBoolean("enableFishingHookCheck", true));
-            settings.put(ConfigNode.FROSTWALKER, config.getBoolean("enableFrostwalkerCheck", true));
-            settings.put(ConfigNode.CHORUS_FRUIT, config.getBoolean("enableChorusFruitCheck", true));
-            settings.put(ConfigNode.BOAT_PLACE, config.getBoolean("enableBoatCheck", true));
-            settings.put(ConfigNode.END_CRYSTAL_PLACE, config.getBoolean("enableEndCrystalCheck", true));
-            settings.put(ConfigNode.LILYPAD_BREAK, config.getBoolean("enableLilypadCheck", true));
+            settings.put(Node.FISHING_HOOK, config.getBoolean("enableFishingHookCheck", true));
+            settings.put(Node.FROSTWALKER, config.getBoolean("enableFrostwalkerCheck", true));
+            settings.put(Node.CHORUS_FRUIT, config.getBoolean("enableChorusFruitCheck", true));
+            settings.put(Node.BOAT_PLACE, config.getBoolean("enableBoatCheck", true));
+            settings.put(Node.END_CRYSTAL_PLACE, config.getBoolean("enableEndCrystalCheck", true));
+            settings.put(Node.LILYPAD_BREAK, config.getBoolean("enableLilypadCheck", true));
 
             disabledWorlds.clear();
             for (String worldName : config.getStringList("disableAllInWorld")) {
-                for (World world : Bukkit.getServer().getWorlds())
-                    if (world.getName().equalsIgnoreCase(worldName)) {
-                        disabledWorlds.add(world);
-                        break;
-                    }
+                World world = Bukkit.getWorld(worldName);
+                if (world != null) disabledWorlds.add(world);
             }
             worldsDisabled = disabledWorlds.size() > 0;
             return true;
         } else {
             configUsed = false;
-            settings.put(ConfigNode.FISHING_HOOK, true);
-            settings.put(ConfigNode.FROSTWALKER, true);
-            settings.put(ConfigNode.CHORUS_FRUIT, true);
-            settings.put(ConfigNode.BOAT_PLACE, true);
-            settings.put(ConfigNode.END_CRYSTAL_PLACE, true);
-            settings.put(ConfigNode.LILYPAD_BREAK, true);
+            settings.clear();
             return false;
         }
     }
@@ -78,7 +70,7 @@ public class Config {
         return new File(fix.getDataFolder(), "config.yml").exists();
     }
 
-    enum ConfigNode {
+    enum Node {
         FISHING_HOOK,
         FROSTWALKER,
         CHORUS_FRUIT,
