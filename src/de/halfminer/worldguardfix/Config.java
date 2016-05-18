@@ -40,17 +40,15 @@ public class Config {
     public boolean load() {
 
         if (useConfigFile()) {
+
+            configUsed = true;
+
             fix.reloadConfig();
             FileConfiguration config = fix.getConfig();
             config.options().copyDefaults(true);
             fix.saveConfig();
-            configUsed = true;
-            settings.put(Node.FISHING_HOOK, config.getBoolean("enableFishingHookCheck", true));
-            settings.put(Node.FROSTWALKER, config.getBoolean("enableFrostwalkerCheck", true));
-            settings.put(Node.CHORUS_FRUIT, config.getBoolean("enableChorusFruitCheck", true));
-            settings.put(Node.BOAT_PLACE, config.getBoolean("enableBoatCheck", true));
-            settings.put(Node.END_CRYSTAL_PLACE, config.getBoolean("enableEndCrystalCheck", true));
-            settings.put(Node.LILYPAD_BREAK, config.getBoolean("enableLilypadCheck", true));
+
+            for (Node node : Node.values()) settings.put(node, config.getBoolean(node.getSetting(), true));
 
             disabledWorlds.clear();
             for (String worldName : config.getStringList("disableAllInWorld")) {
@@ -58,8 +56,10 @@ public class Config {
                 if (world != null) disabledWorlds.add(world);
             }
             worldsDisabled = disabledWorlds.size() > 0;
+
             return true;
         } else {
+
             configUsed = false;
             settings.clear();
             return false;
@@ -71,11 +71,22 @@ public class Config {
     }
 
     enum Node {
-        FISHING_HOOK,
-        FROSTWALKER,
-        CHORUS_FRUIT,
-        BOAT_PLACE,
-        END_CRYSTAL_PLACE,
-        LILYPAD_BREAK
+
+        FISHING_HOOK        ("enableFishingHookCheck"),
+        FROSTWALKER         ("enableFrostwalkerCheck"),
+        CHORUS_FRUIT        ("enableChorusFruitCheck"),
+        BOAT_PLACE          ("enableBoatCheck"),
+        END_CRYSTAL_PLACE   ("enableEndCrystalCheck"),
+        LILYPAD_BREAK       ("enableLilypadCheck");
+
+        private String setting;
+
+        Node(String configSetting) {
+            setting = configSetting;
+        }
+
+        String getSetting() {
+            return setting;
+        }
     }
 }
