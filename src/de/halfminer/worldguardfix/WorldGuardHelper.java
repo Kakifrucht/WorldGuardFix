@@ -47,7 +47,11 @@ public class WorldGuardHelper {
 
     private boolean isAllowedQuery(BukkitPlayer ass, Location loc, StateFlag flag, boolean valueIfNull) {
 
-        if (ass != null && ass.hasPermission("worldguard.region.bypass." + loc.getWorld().getName())) return true;
+        if (ass != null
+                && !flag.equals(DefaultFlag.PVP)
+                && ass.hasPermission("worldguard.region.bypass." + loc.getWorld().getName()))
+            return true;
+
         StateFlag.State state = wg.getRegionContainer().createQuery().queryState(loc, ass, flag);
 
         boolean isAllowed = valueIfNull;

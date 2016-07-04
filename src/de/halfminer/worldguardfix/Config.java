@@ -39,9 +39,7 @@ public class Config {
 
     public boolean load() {
 
-        if (useConfigFile()) {
-
-            configUsed = true;
+        if (configUsed = useConfigFile()) {
 
             fix.reloadConfig();
             FileConfiguration config = fix.getConfig();
@@ -60,7 +58,6 @@ public class Config {
             return true;
         } else {
 
-            configUsed = false;
             settings.clear();
             return false;
         }
