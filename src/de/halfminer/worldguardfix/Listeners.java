@@ -202,10 +202,12 @@ class Listeners implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void disableBlacklistedPotionUse(UseItemEvent e) {
 
+        boolean wasCancelled = e.isCancelled();
         Material material = e.getItemStack().getType();
+
         if (material.equals(Material.POTION)
                 || material.equals(Material.SPLASH_POTION)
                 || material.equals(Material.LINGERING_POTION)) {
@@ -220,7 +222,7 @@ class Listeners implements Listener {
                 if (e.getOriginalEvent() instanceof Cancellable)
                     ((Cancellable) e.getOriginalEvent()).setCancelled(true);
 
-                if (p != null) {
+                if (p != null && !wasCancelled) {
                     p.sendMessage(ChatColor.RED + "Sorry, potions with "
                             + potionType.getType().name() + " can't be used.");
                     p.updateInventory();
